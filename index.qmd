@@ -5,7 +5,7 @@ title: "Sona_NLP"
 Data Cleaning and preparation: reading in all files, separating sentences, by president and year
 
 ```{r, warning=FALSE, message=FALSE}
-# Install and load the stringi package
+# Install and load the stringi packagedf
 #install.packages("stringi")
 library(stringi)
 # Function to parse text document into sentences excluding the first line

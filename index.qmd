@@ -2,6 +2,19 @@
 title: "Sona_NLP"
 ---
 
+Install packages if necessary and load them
+
+```{r}
+#install.packages(c("tm", "textTinyR", "word2vec", "data.table", "caret", "keras"))
+library(tm)
+library(textTinyR)
+library(word2vec)
+library(data.table)
+library(caret)
+library(keras)
+
+```
+
 Data Cleaning and preparation: reading in all files, separating sentences, by president and year
 
 ```{r, warning=FALSE, message=FALSE}
@@ -47,5 +60,30 @@ for (file in files) {
   temp_df <- data.frame(Year = year, President = president_name, Sentences = sentences)
   df <- rbind(df, temp_df)
 }
+
+```
+
+TF-IDF Tokenisation
+
+Here I am running the TF-IDF tokenisation then splitting the data into training, validation and test sets
+
+```{r}
+data = df
+corpus <- Corpus(VectorSource(data$Sentences))
+dtm <- DocumentTermMatrix(corpus, control = list(weighting = weightTfIdf))
+
+X_tfidf <- as.matrix(dtm)
+setDT(data)
+setkey(data, President)
+train_indices <- createDataPartition(data$President, p = 0.6, list = FALSE)
+X_train_tfidf <- X_tfidf[train_indices, ]
+y_train_tfidf <- data$President[train_indices]
+X_temp_tfidf <- X_tfidf[-train_indices, ]
+y_temp_tfidf <- data$President[-train_indices]
+val_indices <- createDataPartition(y_temp_tfidf, p = 0.5, list = FALSE)
+X_val_tfidf <- X_temp_tfidf[val_indices, ]
+y_val_tfidf <- y_temp_tfidf[val_indices]
+X_test_tfidf <- X_temp_tfidf[-val_indices, ]
+y_test_tfidf <- y_temp_tfidf[-val_indices]
 
 ```

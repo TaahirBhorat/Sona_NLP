@@ -302,8 +302,9 @@ Attaching package: 'dplyr'</code></pre>
 <span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> <span class="fu">parse_sentences</span>(file)</span>
 <span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  temp_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Year =</span> year, <span class="at">President =</span> president_name, <span class="at">Sentences =</span> sentences)</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df, temp_df)</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df, temp_df)</span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">=</span> df</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="eda" class="level1">

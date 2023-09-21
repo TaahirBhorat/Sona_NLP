@@ -67,7 +67,8 @@ for (file in files) {
   sentences <- parse_sentences(file)
   
   temp_df <- data.frame(Year = year, President = president_name, Sentences = sentences)
-  data <- rbind(df, temp_df)
+  df <- rbind(df, temp_df)
+  data= df
 }
 
 ```

@@ -4,7 +4,35 @@
     "href": "index.html",
     "title": "Sona_NLP",
     "section": "",
-    "text": "Install packages if necessary and load them\n\n#install.packages(c(\"tm\", \"textTinyR\", \"word2vec\", \"data.table\", \"caret\", \"keras\"))\nlibrary(tm)\n\nLoading required package: NLP\n\nlibrary(textTinyR)\n\nLoading required package: Matrix\n\nlibrary(word2vec)\nlibrary(data.table)\nlibrary(caret)\n\nLoading required package: ggplot2\n\n\n\nAttaching package: 'ggplot2'\n\n\nThe following object is masked from 'package:NLP':\n\n    annotate\n\n\nLoading required package: lattice\n\nlibrary(keras)\n\nData Cleaning and preparation: reading in all files, separating sentences, by president and year\n\n# Install and load the stringi packagedf\n#install.packages(\"stringi\")\nlibrary(stringi)\n# Function to parse text document into sentences excluding the first line\nparse_sentences <- function(file_path) {\n  # Read the text and exclude the first line\n  text_data <- readLines(file_path)\n  text_without_first_line <- paste(text_data[-1], collapse = \" \")\n  \n  # Split the text into sentences and remove empty or whitespace-only strings\n  sentences <- unlist(stri_split_boundaries(text_without_first_line, type = \"sentence\"))\n  sentences <- sentences[stri_trim_both(sentences) != \"\"]\n  \n  return(sentences)\n}\n\n# Initialize an empty dataframe\ndf <- data.frame(Year = integer(), President = character(), Sentences = character())\n\n# List of provided files\nfiles <- c(\n  \"2023_Ramaphosa.txt\", \"2022_Ramaphosa.txt\", \"2021_Ramaphosa.txt\", \"2020_Ramaphosa.txt\", \"2019_Ramaphosa.txt\", \n  \"2019_Ramaphosa_2.txt\", \"2018_Ramaphosa.txt\", \"2017_Zuma.txt\", \"2016_Zuma.txt\", \"2015_Zuma.txt\", \n  \"2014_Zuma.txt\", \"2014_Zuma_2.txt\", \"2013_Zuma.txt\", \"2012_Zuma.txt\", \"2011_Zuma.txt\", \"2010_Zuma.txt\", \n  \"2009_Zuma.txt\", \"2009_ Motlanthe.txt\", \"2008_Mbeki.txt\", \"2007_Mbeki.txt\", \"2006_Mbeki.txt\", \n  \"2005_Mbeki.txt\", \"2004_Mbeki.txt\", \"2004_Mbeki_2.txt\", \"2003_Mbeki.txt\", \"2002_Mbeki.txt\", \n  \"2001_Mbeki.txt\", \"2000_Mbeki.txt\", \"1999_Mandela.txt\", \"1999_Mandela_2.txt\", \"1998_Mandela.txt\", \n  \"1997_Mandela.txt\", \"1996_Mandela.txt\", \"1995_Mandela.txt\", \"1994_Mandela.txt\", \"1994_deKlerk.txt\"\n)\n\n# Loop through each file and append to dataframe\nfor (file in files) {\n  # Extract year and president's name from filename\n  file_info <- strsplit(file, \"_\")[[1]]\n  year <- as.integer(file_info[1])\n  president_name <- gsub(\".txt\", \"\", file_info[2])\n  \n  sentences <- parse_sentences(file)\n  \n  temp_df <- data.frame(Year = year, President = president_name, Sentences = sentences)\n  df <- rbind(df, temp_df)\n}\n\nTF-IDF Tokenisation\nHere I am running the TF-IDF tokenisation then splitting the data into training, validation and test sets\n\ndata = df\ncorpus <- Corpus(VectorSource(data$Sentences))\ndtm <- DocumentTermMatrix(corpus, control = list(weighting = weightTfIdf))\n\nWarning in TermDocumentMatrix.SimpleCorpus(x, control): custom functions are\nignored\n\n\nWarning in weighting(x): empty document(s): 3542 3544 3546 3548 3550 3552 3554\n3556 7587\n\nX_tfidf <- as.matrix(dtm)\nsetDT(data)\nsetkey(data, President)\ntrain_indices <- createDataPartition(data$President, p = 0.6, list = FALSE)\nX_train_tfidf <- X_tfidf[train_indices, ]\ny_train_tfidf <- data$President[train_indices]\nX_temp_tfidf <- X_tfidf[-train_indices, ]\ny_temp_tfidf <- data$President[-train_indices]\nval_indices <- createDataPartition(y_temp_tfidf, p = 0.5, list = FALSE)\nX_val_tfidf <- X_temp_tfidf[val_indices, ]\ny_val_tfidf <- y_temp_tfidf[val_indices]\nX_test_tfidf <- X_temp_tfidf[-val_indices, ]\ny_test_tfidf <- y_temp_tfidf[-val_indices]"
+    "text": "Install packages if necessary and load them"
+  },
+  {
+    "objectID": "index.html#sentences-per-president",
+    "href": "index.html#sentences-per-president",
+    "title": "Sona_NLP",
+    "section": "Sentences per President",
+    "text": "Sentences per President"
+  },
+  {
+    "objectID": "index.html#average-sentence-length-per-president",
+    "href": "index.html#average-sentence-length-per-president",
+    "title": "Sona_NLP",
+    "section": "Average Sentence Length per President",
+    "text": "Average Sentence Length per President"
+  },
+  {
+    "objectID": "index.html#top-words-words-overall",
+    "href": "index.html#top-words-words-overall",
+    "title": "Sona_NLP",
+    "section": "Top words words overall",
+    "text": "Top words words overall"
+  },
+  {
+    "objectID": "index.html#tf-idf-tokenisation",
+    "href": "index.html#tf-idf-tokenisation",
+    "title": "Sona_NLP",
+    "section": "TF-IDF Tokenisation",
+    "text": "TF-IDF Tokenisation\nHere I am running the TF-IDF tokenisation then splitting the data into training, validation and test sets\n\ncorpus <- Corpus(VectorSource(data$Sentences))\ndtm <- DocumentTermMatrix(corpus, control = list(weighting = weightTfIdf))\n\nX_tfidf <- as.matrix(dtm)\nsetDT(data)\nsetkey(data, President)\ntrain_indices <- createDataPartition(data$President, p = 0.6, list = FALSE)\nX_train_tfidf <- X_tfidf[train_indices, ]\ny_train_tfidf <- data$President[train_indices]\nX_temp_tfidf <- X_tfidf[-train_indices, ]\ny_temp_tfidf <- data$President[-train_indices]\nval_indices <- createDataPartition(y_temp_tfidf, p = 0.5, list = FALSE)\nX_val_tfidf <- X_temp_tfidf[val_indices, ]\ny_val_tfidf <- y_temp_tfidf[val_indices]\nX_test_tfidf <- X_temp_tfidf[-val_indices, ]\ny_test_tfidf <- y_temp_tfidf[-val_indices]"
   },
   {
     "objectID": "about.html",

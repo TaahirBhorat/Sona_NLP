@@ -265,46 +265,61 @@ Attaching package: 'dplyr'</code></pre>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install and load the stringi packagedf</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("stringi")</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to parse text document into sentences excluding the first line</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>parse_sentences <span class="ot">&lt;-</span> <span class="cf">function</span>(file_path) {</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the text and exclude the first line</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  text_data <span class="ot">&lt;-</span> <span class="fu">readLines</span>(file_path)</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  text_without_first_line <span class="ot">&lt;-</span> <span class="fu">paste</span>(text_data[<span class="sc">-</span><span class="dv">1</span>], <span class="at">collapse =</span> <span class="st">" "</span>)</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split the text into sentences and remove empty or whitespace-only strings</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">stri_split_boundaries</span>(text_without_first_line, <span class="at">type =</span> <span class="st">"sentence"</span>))</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> sentences[<span class="fu">stri_trim_both</span>(sentences) <span class="sc">!=</span> <span class="st">""</span>]</span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(sentences)</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize an empty dataframe</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Year =</span> <span class="fu">integer</span>(), <span class="at">President =</span> <span class="fu">character</span>(), <span class="at">Sentences =</span> <span class="fu">character</span>())</span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co"># List of provided files</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2023_Ramaphosa.txt"</span>, <span class="st">"2022_Ramaphosa.txt"</span>, <span class="st">"2021_Ramaphosa.txt"</span>, <span class="st">"2020_Ramaphosa.txt"</span>, <span class="st">"2019_Ramaphosa.txt"</span>, </span>
-<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2019_Ramaphosa_2.txt"</span>, <span class="st">"2018_Ramaphosa.txt"</span>, <span class="st">"2017_Zuma.txt"</span>, <span class="st">"2016_Zuma.txt"</span>, <span class="st">"2015_Zuma.txt"</span>, </span>
-<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2014_Zuma.txt"</span>, <span class="st">"2014_Zuma_2.txt"</span>, <span class="st">"2013_Zuma.txt"</span>, <span class="st">"2012_Zuma.txt"</span>, <span class="st">"2011_Zuma.txt"</span>, <span class="st">"2010_Zuma.txt"</span>, </span>
-<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2009_Zuma.txt"</span>, <span class="st">"2009_ Motlanthe.txt"</span>, <span class="st">"2008_Mbeki.txt"</span>, <span class="st">"2007_Mbeki.txt"</span>, <span class="st">"2006_Mbeki.txt"</span>, </span>
-<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2005_Mbeki.txt"</span>, <span class="st">"2004_Mbeki.txt"</span>, <span class="st">"2004_Mbeki_2.txt"</span>, <span class="st">"2003_Mbeki.txt"</span>, <span class="st">"2002_Mbeki.txt"</span>, </span>
-<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2001_Mbeki.txt"</span>, <span class="st">"2000_Mbeki.txt"</span>, <span class="st">"1999_Mandela.txt"</span>, <span class="st">"1999_Mandela_2.txt"</span>, <span class="st">"1998_Mandela.txt"</span>, </span>
-<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"1997_Mandela.txt"</span>, <span class="st">"1996_Mandela.txt"</span>, <span class="st">"1995_Mandela.txt"</span>, <span class="st">"1994_Mandela.txt"</span>, <span class="st">"1994_deKlerk.txt"</span></span>
-<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each file and append to dataframe</span></span>
-<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> files) {</span>
-<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract year and president's name from filename</span></span>
-<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>  file_info <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(file, <span class="st">"_"</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>  year <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(file_info[<span class="dv">1</span>])</span>
-<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>  president_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">".txt"</span>, <span class="st">""</span>, file_info[<span class="dv">2</span>])</span>
-<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> <span class="fu">parse_sentences</span>(file)</span>
-<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  temp_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Year =</span> year, <span class="at">President =</span> president_name, <span class="at">Sentences =</span> sentences)</span>
-<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df, temp_df)</span>
-<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">=</span> df</span>
-<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>clean_text <span class="ot">&lt;-</span> <span class="cf">function</span>(sentences) {</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to a text corpus</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  corpus <span class="ot">&lt;-</span> <span class="fu">Corpus</span>(<span class="fu">VectorSource</span>(sentences))</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert to lowercase, remove punctuation, remove stopwords, strip whitespace</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, <span class="fu">content_transformer</span>(tolower))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, removePunctuation)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, removeWords, <span class="fu">stopwords</span>(<span class="st">"en"</span>))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  corpus <span class="ot">&lt;-</span> <span class="fu">tm_map</span>(corpus, stripWhitespace)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">unlist</span>(<span class="fu">sapply</span>(corpus, as.character)))</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to parse text document into sentences excluding the first line</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>parse_sentences <span class="ot">&lt;-</span> <span class="cf">function</span>(file_path) {</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the text and exclude the first line</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>  text_data <span class="ot">&lt;-</span> <span class="fu">readLines</span>(file_path)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>  text_without_first_line <span class="ot">&lt;-</span> <span class="fu">paste</span>(text_data[<span class="sc">-</span><span class="dv">1</span>], <span class="at">collapse =</span> <span class="st">" "</span>)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Split the text into sentences and remove empty or whitespace-only strings</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">stri_split_boundaries</span>(text_without_first_line, <span class="at">type =</span> <span class="st">"sentence"</span>))</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> sentences[<span class="fu">stri_trim_both</span>(sentences) <span class="sc">!=</span> <span class="st">""</span>]</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(sentences)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize an empty dataframe</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Year =</span> <span class="fu">integer</span>(), <span class="at">President =</span> <span class="fu">character</span>(), <span class="at">Sentences =</span> <span class="fu">character</span>())</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co"># List of provided files</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2023_Ramaphosa.txt"</span>, <span class="st">"2022_Ramaphosa.txt"</span>, <span class="st">"2021_Ramaphosa.txt"</span>, <span class="st">"2020_Ramaphosa.txt"</span>, <span class="st">"2019_Ramaphosa.txt"</span>, </span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2019_Ramaphosa_2.txt"</span>, <span class="st">"2018_Ramaphosa.txt"</span>, <span class="st">"2017_Zuma.txt"</span>, <span class="st">"2016_Zuma.txt"</span>, <span class="st">"2015_Zuma.txt"</span>, </span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2014_Zuma.txt"</span>, <span class="st">"2014_Zuma_2.txt"</span>, <span class="st">"2013_Zuma.txt"</span>, <span class="st">"2012_Zuma.txt"</span>, <span class="st">"2011_Zuma.txt"</span>, <span class="st">"2010_Zuma.txt"</span>, </span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2009_Zuma.txt"</span>, <span class="st">"2009_ Motlanthe.txt"</span>, <span class="st">"2008_Mbeki.txt"</span>, <span class="st">"2007_Mbeki.txt"</span>, <span class="st">"2006_Mbeki.txt"</span>, </span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2005_Mbeki.txt"</span>, <span class="st">"2004_Mbeki.txt"</span>, <span class="st">"2004_Mbeki_2.txt"</span>, <span class="st">"2003_Mbeki.txt"</span>, <span class="st">"2002_Mbeki.txt"</span>, </span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"2001_Mbeki.txt"</span>, <span class="st">"2000_Mbeki.txt"</span>, <span class="st">"1999_Mandela.txt"</span>, <span class="st">"1999_Mandela_2.txt"</span>, <span class="st">"1998_Mandela.txt"</span>, </span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>  <span class="st">"1997_Mandela.txt"</span>, <span class="st">"1996_Mandela.txt"</span>, <span class="st">"1995_Mandela.txt"</span>, <span class="st">"1994_Mandela.txt"</span>, <span class="st">"1994_deKlerk.txt"</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through each file and append to dataframe</span></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> files) {</span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract year and president's name from filename</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>  file_info <span class="ot">&lt;-</span> <span class="fu">strsplit</span>(file, <span class="st">"_"</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>  year <span class="ot">&lt;-</span> <span class="fu">as.integer</span>(file_info[<span class="dv">1</span>])</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>  president_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">".txt"</span>, <span class="st">""</span>, file_info[<span class="dv">2</span>])</span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a>  sentences <span class="ot">&lt;-</span> <span class="fu">parse_sentences</span>(file)</span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean the sentences</span></span>
+<span id="cb16-53"><a href="#cb16-53" aria-hidden="true" tabindex="-1"></a>  clean_sentences <span class="ot">&lt;-</span> <span class="fu">clean_text</span>(sentences)</span>
+<span id="cb16-54"><a href="#cb16-54" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>  temp_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Year =</span> year, <span class="at">President =</span> president_name, <span class="at">Sentences =</span> clean_sentences)</span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df, temp_df)</span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a>  data<span class="ot">&lt;-</span> df</span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="eda" class="level1">

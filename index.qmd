@@ -30,6 +30,19 @@ blah blah blah
 # Install and load the stringi packagedf
 #install.packages("stringi")
 library(stringi)
+
+clean_text <- function(sentences) {
+  # Convert to a text corpus
+  corpus <- Corpus(VectorSource(sentences))
+  
+  # Convert to lowercase, remove punctuation, remove stopwords, strip whitespace
+  corpus <- tm_map(corpus, content_transformer(tolower))
+  corpus <- tm_map(corpus, removePunctuation)
+  corpus <- tm_map(corpus, removeWords, stopwords("en"))
+  corpus <- tm_map(corpus, stripWhitespace)
+  
+  return(unlist(sapply(corpus, as.character)))
+}
 # Function to parse text document into sentences excluding the first line
 parse_sentences <- function(file_path) {
   # Read the text and exclude the first line
@@ -65,15 +78,17 @@ for (file in files) {
   president_name <- gsub(".txt", "", file_info[2])
   
   sentences <- parse_sentences(file)
+  # Clean the sentences
+  clean_sentences <- clean_text(sentences)
   
-  temp_df <- data.frame(Year = year, President = president_name, Sentences = sentences)
+  temp_df <- data.frame(Year = year, President = president_name, Sentences = clean_sentences)
   df <- rbind(df, temp_df)
-  data= df
+  data<- df
 }
 
 ```
 
-# EDA 
+# EDA
 
 ## Sentences per President
 
@@ -116,7 +131,7 @@ ggplot(head(word_freq, 10), aes(x = reorder(word, n), y = n)) +
 
 # Feature Extraction
 
-## TF-IDF Tokenisation 
+## TF-IDF Tokenisation
 
 Here I am running the TF-IDF tokenisation then splitting the data into training, validation and test sets
 
